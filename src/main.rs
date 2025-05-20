@@ -1,8 +1,9 @@
-use envconfig::Envconfig;
 mod config;
 
-use actix_web::{App, HttpServer, Responder, get, web};
 use config::Config;
+
+use actix_web::{App, HttpServer, Responder, get, web};
+use envconfig::Envconfig;
 
 #[get("/hello/{name}")]
 async fn greet(name: web::Path<String>) -> impl Responder {
