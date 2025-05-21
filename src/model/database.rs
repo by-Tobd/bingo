@@ -12,7 +12,6 @@ pub struct Database {
 
 impl Database {
     pub async fn new(config: &Config) -> Result<Database, DbErr> {
-        println!("{:?}", config);
         let db = sea_orm::Database::connect(&config.db_host).await.unwrap();
 
         let db = match db.get_database_backend() {

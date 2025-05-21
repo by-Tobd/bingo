@@ -15,5 +15,8 @@ pub struct Config {
 	pub port: u16,
 
     #[envconfig(from = "MIN_PASSWORD_LENGTH", default = "8")]
-    pub min_password_length: usize
+    pub min_password_length: usize,
+
+    #[envconfig(from = "JWT_SECRET", default = "unsecure")]
+    pub jwt_secret: String
 }

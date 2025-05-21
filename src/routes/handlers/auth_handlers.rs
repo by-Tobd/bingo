@@ -4,7 +4,7 @@ use log::error;
 use sea_orm::{ActiveModelTrait, ActiveValue::Set, ColumnTrait, Condition, EntityTrait, QueryFilter};
 use serde::Deserialize;
 
-use crate::{app_state::AppData, model::user};
+use crate::{app_state::AppData, model::user, util::jwt::encode_jwt};
 
 #[derive(Deserialize)]
 struct UserModel {
@@ -62,15 +62,18 @@ pub async fn login(
 
             match PasswordHash::new(&user.hashed_password) {
                 Ok(hash) => {
-                    if let Err(err) = argon.verify_password(login_json.password.as_bytes(), &hash) {
-                        return HttpResponse::BadRequest().body("Invalid password.");
+                    if let Err(_) = argon.verify_password(login_json.password.as_bytes(), &hash) {
+                        return HttpResponse::BadRequest().body("Invalid credentials.");
                     }
-                    
+                    match encode_jwt(&app_state._config, user.id) {
+                        Ok(token) => HttpResponse::Ok().body(token),
+                        Err(err) => HttpResponse::InternalServerError().body(err.to_string()), //FIXME
+                    }
                 }
-                Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+                Err(err) => HttpResponse::InternalServerError().body(err.to_string()), //FIXME
             }
         },
-        Ok(None) => HttpResponse::BadRequest().body("User doesn't exist.")
+        Ok(None) => HttpResponse::BadRequest().body("Invalid credentials..")
         ,
         Err(err) => HttpResponse::InternalServerError().body(err.to_string()), //FIXME
     }

@@ -6,8 +6,10 @@ mod config;
 mod routes;
 mod app_state;
 mod model;
+mod util;
 
 use config::Config;
+use log::warn;
 use model::database::Database;
 
 #[get("/hello/{name}")]
@@ -21,6 +23,10 @@ async fn main() -> std::io::Result<()> {
     let db = Database::new(&config).await.unwrap();
 
     env_logger::init();
+    if config.jwt_secret == "insecure" {
+        warn!("Using insecure jwt secret!");
+    }
+
     let data = AppData {
         db,
         _config: config.clone()

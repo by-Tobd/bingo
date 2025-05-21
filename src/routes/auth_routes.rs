@@ -7,5 +7,6 @@ pub fn config(config: &mut web::ServiceConfig) {
     config.service(
         web::scope("/api")
         .service(auth_handlers::register)
+        .service(auth_handlers::login)
     );
 }
