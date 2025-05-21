@@ -10,9 +10,6 @@ mod model;
 use config::Config;
 use model::database::Database;
 
-use actix_web::{App, HttpServer, Responder, get, web};
-use envconfig::Envconfig;
-
 #[get("/hello/{name}")]
 async fn greet(name: web::Path<String>) -> impl Responder {
     format!("Hello {name}!")
